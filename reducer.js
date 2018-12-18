@@ -31,7 +31,7 @@ const TIMER_DURATION = 1500;
 const initialState={
     isPlaying:false,
     elapsedTime:0,
-    timeDuration:TIMER_DURATION,
+    timeDuration:TIMER_DURATION
 }
 //Reducer's Functions
 
@@ -42,7 +42,7 @@ function reducer(state=initialState , action) {
                 return applyStartTimer(state , action);
 
             case RESTART_TIMER :
-                return applyRestratTimer(state ,  action);
+                return applyRestartTimer(state ,  action);
 
             case ADD_SECOND :
                 return applyAddSecond(state , action);
@@ -71,10 +71,29 @@ function applyRestartTimer(state , action) {
 }
 
 function applyAddSecond(state , action) {
-    return {
-        ...state,
-        isPlaying:false,
-        elapsedTime:0
+    const {elapsedTime} = state;
+
+    if(elapsedTime < TIMER_DURATION){
+        return {
+            ...state,
+            elapsedTime: elapsedTime + 1
+        }
+    }
+    else {
+        return {
+            ...state,
+            isPlaying:false
+        }
     }
 }
+
+const actionCreators = {
+    startTimer,
+    restartTimer,
+    addSecond,
+}
+
+export {actionCreators};
+
+export default reducer;
 //
