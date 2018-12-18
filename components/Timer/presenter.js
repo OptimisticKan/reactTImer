@@ -1,18 +1,57 @@
 import React , {Component} from "react";
-import {View, Text, StyleSheet} from "react-native";
+import {View, Text, StyleSheet, StatusBar} from "react-native";
 import Button from '../Button';
+import { start } from "repl";
 
+function formatTime(time){
+  var minutes = Math.floor(time/60);
+  time -=minutes*60;
+
+  var second = parseInt(time%60, 10);
+
+  return `${minutes < 10 ? `0$(minutes)` : minutes}:${seconds < 10 ? '0${seconds}` : seconds}`;
+  return;
+}
 class Timer extends Component {
+
+  componentWillReceiveProps(nextProps){
+      const currentProps = this.props;
+      if(!currentProps.isPlaying && nextProps.isPlaying) {
+        const timerInterval = setInterval(()=>{
+          currentProps.addSecond();
+        }, 1000)
+      this.setState({
+        interval : timerInterval
+      });
+      }
+
+      else if(currentProps.isPlaying && !nextProps.isPlaying) {
+        clearInterval(this.state.interval);
+      }
+  }
   //View 컴포넌트 사용 1개일때는 <View wddjwkldj >, react는 보여지는 구역으로 render() 필요, View와 View 사이에 속성 집어 넣을 것 
   render(){
+
+    const {
+      isPlaying,
+      elapsedTime,
+      timeDuration,
+      startTimer,
+      restartTimer,
+    }
     return(
       <View style={styles.container}> 
+      <StatusBar barStyle= 'light-content'/>
       <View style={styles.upper}>
-        <Text style={styles.time}>25:00</Text>
+        {formatTime(timeDuration - elapsedTime)}
       </View> 
       <View style={styles.lower}> 
-        <Button iconName="play-circle" onPress={()=>alert("It's start!")}/>
-        <Button iconName="stop-circle" onPress={()=>alert("It's stop!")}/>
+        {!isPlaying && (
+        <Button iconName="play-circle" onPress={startTimer}/>
+        )}
+        {isPlaying && (
+        <Button iconName="stop-circle" onPress={restartTimer}/>
+        )}
       </View>
       </View>
     );
